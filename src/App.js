@@ -1,5 +1,6 @@
 import React from "react";
 import styled from "styled-components";
+import { apiData } from "./api";
 
 const Title = styled.div`
   background-color: #99e2ef;
