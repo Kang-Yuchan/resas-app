@@ -4,5 +4,6 @@
 
 - [x] Create React App
 - [x] Minumum complete app
+- [x] Graph appearance arrange
 - [ ] Change to functional component
 - [ ] Refactoring

@@ -80,8 +80,8 @@ class App extends Component {
         .then((response) => response.json())
         .then((res) => {
           let tmp = [];
-          Object.keys(res.result.data).forEach((i) => {
-            tmp.push(res.result.data[i].data[0].value);
+          Object.keys(res.result.data[0].data).forEach((i) => {
+            tmp.push(res.result.data[0].data[i].value);
           });
           const res_series = {
             name: this.state.prefectures[index].prefName,
@@ -127,16 +127,57 @@ class App extends Component {
         type: "line",
       },
       title: {
-        text: "総合人口推移",
+        text: "都道府県別 総人口推移",
+      },
+      legend: {
+        layout: "vertical",
+        align: "right",
+        verticalAlign: "top",
+        itemMarginTop: 20,
+        itemStyle: {
+          fontSize: "15px",
+        },
       },
       plotOptions: {
         series: {
           label: {
             connectorAllowed: false,
           },
-          pointInterval: 10,
-          pointStart: 1970,
+          pointInterval: 5,
+          pointStart: 1960,
         },
+      },
+      yAxis: {
+        labels: {
+          formatter: function () {
+            return this.value === 0 ? "" : this.value.toLocaleString() + "人";
+          },
+        },
+        min: 0,
+        gridLineColor: "transparent",
+        tickWidth: 1,
+        tickInterval: 500000,
+        title: {
+          text: "人口数",
+          textAlign: "right",
+          rotation: 0,
+          x: 90,
+          y: -170,
+        },
+        lineWidth: 1,
+      },
+      xAxis: {
+        labels: {
+          formatter: function () {
+            return this.value + "年";
+          },
+        },
+        title: {
+          text: "年数",
+          x: 510,
+          y: -32,
+        },
+        tickInterval: 10,
       },
       series: this.state.series,
     };
