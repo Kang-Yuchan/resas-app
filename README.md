@@ -8,3 +8,12 @@
 - [x] Add loading state
 - [ ] Change to functional component
 - [ ] Refactoring
+
+# Usage
+
+```bash
+git clone https://github.com/Kang-Yuchan/resas-app
+cd resas-app
+npm install
+npm start or yarn start
+```
