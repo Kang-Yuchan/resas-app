@@ -60,7 +60,9 @@ class App extends Component {
     fetch("https://opendata.resas-portal.go.jp/api/v1/prefectures", {
       headers: { "X-API-KEY": apiKey },
     })
-      .then((response) => response.json())
+      .then((response) => {
+        return response.json();
+      })
       .then((res) => {
         this.setState({ prefectures: res.result, loading: false });
       });
