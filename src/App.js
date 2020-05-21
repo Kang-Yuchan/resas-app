@@ -3,6 +3,7 @@ import styled from "styled-components";
 import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
 import { apiKey } from "./api";
+import Loader from "./Loader";
 
 const Title = styled.div`
   background-color: #99e2ef;
@@ -50,6 +51,7 @@ class App extends Component {
       selected: Array(47).fill(false),
       prefectures: {},
       series: [],
+      loading: true,
     };
     this._changeSelection = this._changeSelection.bind(this);
   }
@@ -60,15 +62,16 @@ class App extends Component {
     })
       .then((response) => response.json())
       .then((res) => {
-        this.setState({ prefectures: res.result });
+        this.setState({ prefectures: res.result, loading: false });
       });
   }
 
   _changeSelection(index) {
-    const selected_copy = this.state.selected.slice();
+    const { selected, prefectures, series } = this.state;
+    const selected_copy = selected.slice();
     selected_copy[index] = !selected_copy[index];
 
-    if (!this.state.selected[index]) {
+    if (!selected[index]) {
       fetch(
         `https://opendata.resas-portal.go.jp/api/v1/population/composition/perYear?cityCode=-&prefCode=${
           index + 1
@@ -84,19 +87,19 @@ class App extends Component {
             tmp.push(res.result.data[0].data[i].value);
           });
           const res_series = {
-            name: this.state.prefectures[index].prefName,
+            name: prefectures[index].prefName,
             data: tmp,
           };
           this.setState({
             selected: selected_copy,
-            series: [...this.state.series, res_series],
+            series: [...series, res_series],
           });
         });
     } else {
-      const series_copy = this.state.series.slice();
+      const series_copy = series.slice();
 
       for (let i = 0; i < series_copy.length; i++) {
-        if (series_copy[i].name == this.state.prefectures[index].prefName) {
+        if (series_copy[i].name === prefectures[index].prefName) {
           series_copy.splice(i, 1);
         }
       }
@@ -108,11 +111,12 @@ class App extends Component {
   }
 
   renderItem(props) {
+    const { selected } = this.state;
     return (
       <div key={props.prefCode} style={{ margin: "5px", width: "100px" }}>
         <input
           type="checkbox"
-          checked={this.state.selected[props.prefCode - 1]}
+          checked={selected[props.prefCode - 1]}
           onChange={() => this._changeSelection(props.prefCode - 1)}
         />
         <span>{props.prefName}</span>
@@ -121,7 +125,8 @@ class App extends Component {
   }
 
   render() {
-    const obj = this.state.prefectures;
+    const { prefectures, series, loading } = this.state;
+    const obj = prefectures;
     const options = {
       chart: {
         type: "line",
@@ -179,20 +184,24 @@ class App extends Component {
         },
         tickInterval: 10,
       },
-      series: this.state.series,
+      series: series,
     };
     return (
       <>
-        <div>
-          <Title>RESAS APP</Title>
-          <Main>
-            <Label>都道府県</Label>
-            <Container>
-              {Object.keys(obj).map((i) => this.renderItem(obj[i]))}
-            </Container>
-            <HighchartsReact highcharts={Highcharts} options={options} />
-          </Main>
-        </div>
+        {loading ? (
+          <Loader />
+        ) : (
+          <div>
+            <Title>RESAS APP</Title>
+            <Main>
+              <Label>都道府県</Label>
+              <Container>
+                {Object.keys(obj).map((i) => this.renderItem(obj[i]))}
+              </Container>
+              <HighchartsReact highcharts={Highcharts} options={options} />
+            </Main>
+          </div>
+        )}
       </>
     );
   }
