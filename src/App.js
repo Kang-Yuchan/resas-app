@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import styled from "styled-components";
 import Highcharts from "highcharts";
 import HighchartsReact from "highcharts-react-official";
-import { apiKey } from "./api";
+import { apiData } from "./api";
 import Loader from "./Loader";
 
 const Title = styled.div`
@@ -56,16 +56,17 @@ class App extends Component {
     this._changeSelection = this._changeSelection.bind(this);
   }
 
-  componentDidMount() {
-    fetch("https://opendata.resas-portal.go.jp/api/v1/prefectures", {
-      headers: { "X-API-KEY": apiKey },
-    })
-      .then((response) => {
-        return response.json();
-      })
-      .then((res) => {
-        this.setState({ prefectures: res.result, loading: false });
-      });
+  async componentDidMount() {
+    try {
+      const {
+        data: { result: locations },
+      } = await apiData.locations();
+      this.setState({ prefectures: locations });
+    } catch (err) {
+      console.log(err);
+    } finally {
+      this.setState({ loading: false });
+    }
   }
 
   _changeSelection(index) {
@@ -73,30 +74,35 @@ class App extends Component {
     const selected_copy = selected.slice();
     selected_copy[index] = !selected_copy[index];
 
-    if (!selected[index]) {
-      fetch(
-        `https://opendata.resas-portal.go.jp/api/v1/population/composition/perYear?cityCode=-&prefCode=${
-          index + 1
-        }`,
-        {
-          headers: { "X-API-KEY": apiKey },
-        }
-      )
-        .then((response) => response.json())
-        .then((res) => {
-          let tmp = [];
-          Object.keys(res.result.data[0].data).forEach((i) => {
-            tmp.push(res.result.data[0].data[i].value);
-          });
-          const res_series = {
-            name: prefectures[index].prefName,
-            data: tmp,
-          };
-          this.setState({
-            selected: selected_copy,
-            series: [...series, res_series],
-          });
+    const fetchApi = async (code) => {
+      try {
+        const {
+          data: {
+            result: { data: population },
+          },
+        } = await apiData.population(code);
+
+        const total_population = population[0];
+        let tmp = [];
+
+        Object.keys(total_population.data).forEach((i) => {
+          tmp.push(total_population.data[i].value);
         });
+        const res_series = {
+          name: prefectures[index].prefName,
+          data: tmp,
+        };
+        this.setState({
+          selected: selected_copy,
+          series: [...series, res_series],
+        });
+      } catch (err) {
+        console.log(err);
+      }
+    };
+
+    if (!selected[index]) {
+      fetchApi(index);
     } else {
       const series_copy = series.slice();
 

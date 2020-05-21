@@ -6,6 +6,7 @@
 - [x] Minumum complete app
 - [x] Graph appearance arrange
 - [x] Add loading state
+- [x] Fetch change to axios(Promise -> async, await)
 - [ ] Change to functional component
 - [ ] Refactoring
 
