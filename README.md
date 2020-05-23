@@ -18,3 +18,5 @@ cd resas-app
 npm install
 npm start or yarn start
 ```
+
+Try it: https://cocky-curie-52bbce.netlify.app/
