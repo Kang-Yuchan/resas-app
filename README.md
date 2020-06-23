@@ -57,6 +57,10 @@ yarn start
 - Twitter: [@chakotama2](https://twitter.com/chakotama2)
 - Github: [@Kang-Yuchan](https://github.com/Kang-Yuchan)
 
+## Try App
+
+-Try it!: https://cocky-curie-52bbce.netlify.app/
+
 ## Show your support
 
 Give a ⭐️ if this project helped you!
