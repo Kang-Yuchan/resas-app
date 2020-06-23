@@ -59,7 +59,7 @@ yarn start
 
 ## Try App
 
--Try it!: https://cocky-curie-52bbce.netlify.app/
+- Try it!: https://cocky-curie-52bbce.netlify.app/
 
 ## Show your support
 
